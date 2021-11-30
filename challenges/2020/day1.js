@@ -1,6 +1,8 @@
 const { readLines } = require('../../utils/readandwrite');
 const { logTime } = require('../../utils/util');
 
+console.log(process.env.YEAR);
+
 const numbers = readLines('input/2020/aoc1.txt').map((x) => Number(x));
 
 function findSumOf2020(numbers) {

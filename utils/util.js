@@ -1,6 +1,6 @@
-const maxBy = (cb) => (a, b) => (cb(b) > cb(a) ? b : a);
+const maxBy = (cb) => (a, b) => cb(b) > cb(a) ? b : a;
 
-const minBy = (cb) => (a, b) => (cb(b) < cb(a) ? b : a);
+const minBy = (cb) => (a, b) => cb(b) < cb(a) ? b : a;
 
 const findRoutes = (
   graph,
@@ -57,9 +57,10 @@ const toPath = (prev, source, dest) => {
 const logTime = (ex = 'exercise', cb) => {
   console.time(ex);
   const result = cb();
-  console.timeEnd(ex);
-  if (!ex.includes('Parse')) {
-    console.log(`${ex}: ${result}`);
+  if (ex.includes('Parse')) {
+    console.timeLog(ex);
+  } else {
+    console.timeLog(ex, `➡️ ${result}`);
   }
   return result;
 };
