@@ -9,7 +9,9 @@ const DEFAULT_YEAR = process.env.YEAR || TODAY.getFullYear();
 const DEFAULT_DAY = TODAY.getDate();
 const RUN_FAST = process.env.FAST === 'true';
 
-console.log('Hello Advent of Code conquerer! What would you like to run?');
+if (!RUN_FAST) {
+  console.log('Hello Advent of Code conquerer! What would you like to run?');
+}
 
 inquirer
   .prompt([
