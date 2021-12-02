@@ -57,7 +57,7 @@ const toPath = (prev, source, dest) => {
 const logTime = (ex = 'exercise', cb) => {
   console.time(ex);
   const result = cb();
-  if (ex.includes('Parse')) {
+  if (ex.includes('Parse') || ex.includes('Total')) {
     console.timeLog(ex);
   } else {
     console.timeLog(ex, `➡️ ${result}`);

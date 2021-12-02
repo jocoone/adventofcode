@@ -12,6 +12,7 @@ function A(input) {
 function B(input) {
   let count = 0;
   let lastSum = 0;
+
   for (let i = 0; i < input.length - 2; i++) {
     const sum = input[i] + input[i + 1] + input[i + 2];
     if (sum > lastSum) {
@@ -23,7 +24,7 @@ function B(input) {
 }
 
 function parse(input) {
-  return input.map((x) => parseInt(x, 10));
+  return input.map(Number);
 }
 
 module.exports = { A, B, parse };
