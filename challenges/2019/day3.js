@@ -1,11 +1,4 @@
-const { readLines } = require('../utils/readandwrite');
-const { intersectionWith, uniqWith, uniq, isEqual, min, find } = require('lodash');
-
-console.time('aoc3');
-
-const lines = readLines('input/aoc3.txt');
-const wire1 = lines[0].split(',');
-const wire2 = lines[1].split(',');
+const { min } = require('lodash');
 
 function doSteps(instruction, startX, startY) {
   const direction = instruction[0];
@@ -15,26 +8,25 @@ function doSteps(instruction, startX, startY) {
     for (let x = startX; x < startX + amount; x++) {
       positions.push(`${x}:${startY}`);
     }
-    return { positions, x: startX + amount, y: startY}
+    return { positions, x: startX + amount, y: startY };
   }
   if (direction === 'L') {
-
     for (let x = startX; x > startX - amount; x--) {
       positions.push(`${x}:${startY}`);
     }
-    return { positions, x: startX - amount, y: startY }
+    return { positions, x: startX - amount, y: startY };
   }
   if (direction === 'U') {
     for (let y = startY; y > startY - amount; y--) {
       positions.push(`${startX}:${y}`);
     }
-    return { positions, x: startX, y: startY - amount }
+    return { positions, x: startX, y: startY - amount };
   }
   if (direction === 'D') {
     for (let y = startY; y < startY + amount; y++) {
       positions.push(`${startX}:${y}`);
     }
-    return { positions, x: startX, y: startY + amount}
+    return { positions, x: startX, y: startY + amount };
   }
 }
 
@@ -49,33 +41,32 @@ function walk(wire, checkWire) {
     const amount = parseInt(instruction.replace(direction, ''));
     if (direction === 'R') {
       for (let x = startX; x < startX + amount; x++) {
-        if (checkWire.includes(`${x}:${startY}`) ) {
-          positions.push(`${x}:${startY}`)
+        if (checkWire.includes(`${x}:${startY}`)) {
+          positions.push(`${x}:${startY}`);
         }
       }
       startX = startX + amount;
     }
     if (direction === 'L') {
       for (let x = startX; x > startX - amount; x--) {
-        if (checkWire.includes(`${x}:${startY}`) ) {
-          positions.push(`${x}:${startY}`)
+        if (checkWire.includes(`${x}:${startY}`)) {
+          positions.push(`${x}:${startY}`);
         }
       }
       startX = startX - amount;
     }
     if (direction === 'U') {
       for (let y = startY; y > startY - amount; y--) {
-        if (checkWire.includes(`${startX}:${y}`) ) {
-          positions.push(`${startX}:${y}`)
+        if (checkWire.includes(`${startX}:${y}`)) {
+          positions.push(`${startX}:${y}`);
         }
       }
       startY = startY - amount;
-
     }
     if (direction === 'D') {
       for (let y = startY; y < startY + amount; y++) {
         if (checkWire.includes(`${startX}:${y}`)) {
-          positions.push(`${startX}:${y}`)
+          positions.push(`${startX}:${y}`);
         }
       }
       startY = startY + amount;
@@ -87,12 +78,11 @@ function walk(wire, checkWire) {
 
 function walkWire(wire, xx, yy) {
   for (let i = 0; i < wire.length; i++) {
-    const s = wire[i].split(':').map(x => parseInt(x));
+    const s = wire[i].split(':').map((x) => parseInt(x));
     if (s[0] === xx && s[1] === yy) {
       return i;
     }
   }
-  console.log('willy');
   return 0;
 }
 
@@ -117,38 +107,54 @@ function getDistance(x1, x2, y1, y2) {
 
 function getSmallestDistance(intersections, x, y) {
   const distances = intersections
-    .map(i => {
-      const s = i.split(':').map(x => parseInt(x));
-      return { x: s[0], y: s[1]};
+    .map((i) => {
+      const s = i.split(':').map((x) => parseInt(x));
+      return { x: s[0], y: s[1] };
     })
-    .map((intersection) => getDistance(intersection.x, x, intersection.y, y)).filter(x => x !== 0);
+    .map((intersection) => getDistance(intersection.x, x, intersection.y, y))
+    .filter((x) => x !== 0);
 
   return min(distances);
 }
 
 function calculateDistanceToPoint(point, wire) {
-  const s = point.split(':').map(x => parseInt(x));
+  const s = point.split(':').map((x) => parseInt(x));
   return walkWire(wire, s[0], s[1]);
 }
 
-function getSmallestDelay(intersections, w1, w2) {
+function getSmallestDelay(intersections, w1, w2) {
   const sums = [];
-  intersections.filter(x => x!== '0:0').forEach(intersection => {
-    const w1Distance = calculateDistanceToPoint(intersection, w1);
-    const w2Distance = calculateDistanceToPoint(intersection, w2);
-    sums.push(w1Distance + w2Distance);
-  });
+  intersections
+    .filter((x) => x !== '0:0')
+    .forEach((intersection) => {
+      const w1Distance = calculateDistanceToPoint(intersection, w1);
+      const w2Distance = calculateDistanceToPoint(intersection, w2);
+      sums.push(w1Distance + w2Distance);
+    });
 
   return min(sums);
 }
 
-console.timeLog('aoc3', 'Creating wire 1')
-const w1 = createWire(wire1);
-console.timeLog('aoc3', 'Creating wire 2')
-const w2 = createWire(wire2);
-const intersections = walk(wire2, w1);
+function A({ intersections }) {
+  return getSmallestDistance(intersections, 0, 0);
+}
 
-// console.log(`Smallest distance = ${getSmallestDistance(intersections, 0, 0)}`);
-console.log(`Smallest combined steps = ${getSmallestDelay(intersections, w1, w2)}`);
+function B({ intersections, wire1, wire2 }) {
+  return getSmallestDelay(intersections, wire1, wire2);
+}
 
-console.timeEnd('aoc3');
+function parse(input) {
+  const w1 = input[0].split(',');
+  const w2 = input[1].split(',');
+  const wire1 = createWire(w1);
+  const wire2 = createWire(w2);
+  const intersections = walk(w2, wire1);
+
+  return {
+    wire1,
+    wire2,
+    intersections,
+  };
+}
+
+module.exports = { A, B, parse };

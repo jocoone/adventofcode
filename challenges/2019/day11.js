@@ -1,11 +1,7 @@
-const { readLines } = require('../utils/readandwrite');
 const { uniqBy, find } = require('lodash');
-const IntCodeRunner = require('../common/icc');
+const IntCodeRunner = require('../../common/icc');
 
-const RIGHT = 1;
 const LEFT = 0;
-const DOWN = 2;
-const UP = 3;
 
 const ALPHABET = {
   A: ' XX X  XX  XXXXXX  XX  X',
@@ -37,9 +33,8 @@ const ALPHABET = {
 };
 
 class Painter {
-  constructor(input, startColor) {
-    this.startColor = startColor;
-    this.direction = "UP";
+  constructor(input) {
+    this.direction = 'UP';
     this.program = new IntCodeRunner(input, [], 2);
     this.coordinates = [];
     this.lastX = 0;
@@ -47,39 +42,44 @@ class Painter {
   }
 
   movePointer(turn) {
-    if (this.direction === "UP") {
-      this.direction = turn === LEFT ? "LEFT" : "RIGHT";
-    } else if (this.direction === "DOWN") {
-      this.direction = turn === LEFT ? "RIGHT" : "LEFT";
-    } else if (this.direction === "RIGHT") {
-      this.direction = turn === LEFT ? "UP" : "DOWN";
+    if (this.direction === 'UP') {
+      this.direction = turn === LEFT ? 'LEFT' : 'RIGHT';
+    } else if (this.direction === 'DOWN') {
+      this.direction = turn === LEFT ? 'RIGHT' : 'LEFT';
+    } else if (this.direction === 'RIGHT') {
+      this.direction = turn === LEFT ? 'UP' : 'DOWN';
     } else {
-      this.direction = turn === LEFT ? "DOWN" : "UP";
+      this.direction = turn === LEFT ? 'DOWN' : 'UP';
     }
-    if (this.direction === "UP") {
+    if (this.direction === 'UP') {
       this.lastY++;
-    } else if (this.direction === "DOWN") {
+    } else if (this.direction === 'DOWN') {
       this.lastY--;
-    } else if (this.direction === "RIGHT") {
+    } else if (this.direction === 'RIGHT') {
       this.lastX++;
     } else {
       this.lastX--;
     }
   }
 
-  draw() {
+  draw(startColor = 0) {
     do {
-      const coordinate = find(this.coordinates, { x: this.lastX, y: this.lastY });
-      const result = this.program.run(coordinate ? coordinate.color : this.startColor);
+      const coordinate = find(this.coordinates, {
+        x: this.lastX,
+        y: this.lastY,
+      });
+      const result = this.program.run(
+        coordinate ? coordinate.color : startColor
+      );
       const [color, turn] = result;
       if (coordinate) {
-        coordinate.color = color
+        coordinate.color = color;
       } else {
-        this.coordinates.push({x: this.lastX, y: this.lastY, color });
+        this.coordinates.push({ x: this.lastX, y: this.lastY, color });
       }
       this.movePointer(turn);
       this.program.clear();
-    } while(!this.program.terminated);
+    } while (!this.program.terminated);
   }
 
   visualise(result) {
@@ -103,10 +103,10 @@ class Painter {
       }
     }
     let rule = [];
-    for (let y = largestY; y > smallestY - 1; y--){
+    for (let y = largestY; y > smallestY - 1; y--) {
       let row = [];
       for (let x = smallestX + 1; x < largestX; x++) {
-        const coordinate = find(result, {x, y});
+        const coordinate = find(result, { x, y });
         if (coordinate && coordinate.color === 1) {
           row.push('X');
         } else {
@@ -118,30 +118,29 @@ class Painter {
     return rule;
   }
 
+  clear() {
+    this.direction = 'UP';
+    this.coordinates = [];
+    this.lastX = 0;
+    this.lastY = 0;
+  }
 }
 
-function part1(file) {
-  console.time('aoc11p1');
-  const input = readLines(file)[0].split(',').map(Number);
-  const painter = new Painter(input, 0);
+function A(painter) {
+  painter.draw(0);
 
-  painter.draw();
-
-  console.timeEnd('aoc11p1');
-  return uniqBy(painter.coordinates, x => x.x + '-' + x.y).length;
+  const result = uniqBy(painter.coordinates, (x) => x.x + '-' + x.y).length;
+  //painter.clear();
+  return result;
 }
 
-function part2(file) {
-  console.time('aoc11p2');
-  const input = readLines(file)[0].split(',').map(Number);
-  const painter = new Painter(input, 1);
-
-  painter.draw();
+function B(painter) {
+  painter.draw(1);
   const visualisation = painter.visualise(painter.coordinates);
   const letters = [];
   for (let i = 0; i < 8; i++) {
     let letter = '';
-    for(let y = 0; y < visualisation.length; y++) {
+    for (let y = 0; y < visualisation.length; y++) {
       for (let x = 0; x < visualisation[y].length; x++) {
         if (x >= letters.length * 5 && x < letters.length * 5 + 4) {
           letter += visualisation[y][x];
@@ -151,25 +150,27 @@ function part2(file) {
     letters.push(letter);
   }
 
-  const sentence = letters.map(letter => {
-    const a = Object.keys(ALPHABET);
-    for (let i = 0; i < a.length; i++) {
-      if (ALPHABET[a[i]] === letter) {
-        return a[i];
+  const sentence = letters
+    .map((letter) => {
+      const a = Object.keys(ALPHABET);
+      for (let i = 0; i < a.length; i++) {
+        if (ALPHABET[a[i]] === letter) {
+          return a[i];
+        }
       }
-    }
-  }).join('');
+    })
+    .join('');
 
-  console.timeEnd('aoc11p2');
   return sentence;
 }
 
-const input = readLines('input/aoc11.txt')[0].split(',').map(Number);
-const painter = new Painter(input, 0);
-painter.draw();
-const visualisation = painter.visualise(painter.coordinates);
-console.log(visualisation.map(x => x.join(' ')).join('\n'));
+function parse(input) {
+  const visuals = input[0].split(',').map(Number);
+  return new Painter(visuals);
+}
 
 module.exports = {
-  part1, part2
+  A,
+  B,
+  parse,
 };

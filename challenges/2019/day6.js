@@ -1,15 +1,10 @@
-const { readLines } = require('../utils/readandwrite');
 const { intersection, reverse } = require('lodash');
-
-console.time('aoc6');
-
-const lines = readLines('input/aoc6.txt');
 
 function calculateDirectOrbits(lines) {
   const solarSystem = {
     orbits: {},
   };
-  lines.forEach(line => {
+  lines.forEach((line) => {
     const info = line.split(')');
     const a = info[0];
     const b = info[1];
@@ -26,9 +21,9 @@ function countOrbits(orbits, start, niveau) {
   if (orbits[start]) {
     let count = 0;
 
-    orbits[start].forEach(o => {
+    orbits[start].forEach((o) => {
       count += countOrbits(orbits, o, niveau + 1);
-    })
+    });
 
     return count + niveau;
   }
@@ -36,8 +31,8 @@ function countOrbits(orbits, start, niveau) {
 }
 
 function getStartObject(orbits, object) {
-  const result = []
-  Object.keys(orbits).forEach(o => {
+  const result = [];
+  Object.keys(orbits).forEach((o) => {
     if (orbits[o].includes(object)) {
       result.push(o);
     }
@@ -57,7 +52,7 @@ function getPathToCOM(orbits, object) {
         start = o;
       }
     }
-  } while(result.indexOf('COM') < 0);
+  } while (result.indexOf('COM') < 0);
   return reverse(result);
 }
 
@@ -70,8 +65,16 @@ function getSmallestOrbitalTransfers(orbits) {
   return youPathToCom.length + sanPathToCom.length - 2 * join.length;
 }
 
-const solarSystem = calculateDirectOrbits(lines);
+function A(solarSystem) {
+  return countOrbits(solarSystem.orbits, 'COM', 0);
+}
 
-console.log(`Number of orbits: ${countOrbits(solarSystem.orbits, 'COM', 0)}`);
-console.log(`Path from YOU to SAN in ${getSmallestOrbitalTransfers(solarSystem.orbits)} steps`);
-console.timeEnd('aoc6');
+function B(solarSystem) {
+  return getSmallestOrbitalTransfers(solarSystem.orbits);
+}
+
+function parse(input) {
+  return calculateDirectOrbits(input);
+}
+
+module.exports = { A, B, parse };

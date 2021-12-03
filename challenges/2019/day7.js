@@ -1,18 +1,10 @@
-const { readLines } = require('../utils/readandwrite');
-const IntCodeRunner = require('../common/icc');
+const IntCodeRunner = require('../../common/icc');
 const { uniq } = require('lodash');
 
-function getProgram(input) {
-  const lines = readLines(input);
-  return lines[0].split(',').map(x => parseInt(x));
-}
-
-function part1(input) {
-  console.time('aoc7p1');
-  const program = getProgram(input);
+function A(program) {
   const settings = getPhaseSettings(false);
   let result = 0;
-  settings.forEach(setting => {
+  settings.forEach((setting) => {
     const a = new IntCodeRunner(program, [setting[0]]).run(0);
     const b = new IntCodeRunner(program, [setting[1]]).run(a);
     const c = new IntCodeRunner(program, [setting[2]]).run(b);
@@ -22,17 +14,14 @@ function part1(input) {
       result = e;
     }
   });
-  console.timeEnd('aoc7p1');
   return result;
 }
 
-function part2(input) {
-  console.time('aoc7p2');
-  const program = getProgram(input);
+function B(program) {
   const settings = getPhaseSettings(true);
   const thrusterSignals = [];
-  settings.forEach(setting => {
-    const amplifiers = setting.map(s => new IntCodeRunner([...program], [s]));
+  settings.forEach((setting) => {
+    const amplifiers = setting.map((s) => new IntCodeRunner([...program], [s]));
 
     let index = 0;
     let lastOutput = 0;
@@ -49,7 +38,6 @@ function part2(input) {
 
     thrusterSignals.push(Number(lastOutput));
   });
-  console.timeEnd('aoc7p2');
   return thrusterSignals.sort((a, b) => b - a)[0];
 }
 
@@ -61,7 +49,7 @@ function getPhaseSettings(loopmode) {
       for (let k = start; k < start + 5; k++) {
         for (let l = start; l < start + 5; l++) {
           for (let m = start; m < start + 5; m++) {
-            if (uniq([i,j,k,l,m]).length === 5) {
+            if (uniq([i, j, k, l, m]).length === 5) {
               result.push([i, j, k, l, m]);
             }
           }
@@ -72,8 +60,12 @@ function getPhaseSettings(loopmode) {
   return result;
 }
 
+function parse(input) {
+  return input[0].split(',').map(Number);
+}
+
 module.exports = {
-  part1, part2
+  A,
+  B,
+  parse,
 };
-
-
