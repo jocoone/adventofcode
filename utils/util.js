@@ -60,7 +60,7 @@ const logTime = (ex = 'exercise', cb) => {
   if (ex.includes('Parse') || ex.includes('Total')) {
     console.timeLog(ex);
   } else {
-    console.timeLog(ex, `➡️ ${result}`);
+    console.timeLog(ex, `➡️ ${JSON.stringify(result)}`);
   }
   return result;
 };

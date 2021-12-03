@@ -1,13 +1,14 @@
 require('dotenv').config();
 const inquirer = require('inquirer');
+const argv = require('yargs')(process.argv).argv;
 const fs = require('fs');
 const { logTime } = require('./utils/util');
 const { readLines } = require('./utils/readandwrite');
 
 const TODAY = new Date();
-const DEFAULT_YEAR = process.env.YEAR || TODAY.getFullYear();
-const DEFAULT_DAY = TODAY.getDate();
-const RUN_FAST = process.env.FAST === 'true';
+const DEFAULT_YEAR = argv.year || process.env.YEAR || TODAY.getFullYear();
+const DEFAULT_DAY = argv.day || TODAY.getDate();
+const RUN_FAST = process.env.FAST === 'true' || (argv.year && argv.day);
 
 if (!RUN_FAST) {
   console.log('Hello Advent of Code conquerer! What would you like to run?');
@@ -22,7 +23,7 @@ inquirer
       when: () => !RUN_FAST,
       validate: (input) => {
         const year = parseInt(input);
-        if (isNaN(year) || year < 2021 || year > DEFAULT_YEAR) {
+        if (isNaN(year) || year > TODAY.getFullYear()) {
           return false;
         }
         return true;
@@ -38,19 +39,18 @@ inquirer
         if (isNaN(day) || day > 25 || day < 1) {
           return false;
         }
-        return (
-          fs.existsSync(`./challenges/${year}/day${day}.js`) &&
-          fs.existsSync(`./input/${year}/aoc${day}.txt`)
-        );
+        return fs.existsSync(`./challenges/${year}/day${day}.js`);
       },
     },
   ])
   .then(({ year = DEFAULT_YEAR, day = DEFAULT_DAY }) => {
-    const input = readLines(`input/${year}/aoc${day}.txt`);
+    const input = fs.existsSync(`./input/${year}/aoc${day}.txt`)
+      ? readLines(`input/${year}/aoc${day}.txt`)
+      : [];
     const { A, B, parse } = require(`./challenges/${year}/day${day}.js`);
     const parsedInput = logTime('Parse', () => parse(input));
-    logTime('A', () => A(parsedInput));
-    logTime('B', () => B(parsedInput));
+    const answerA = logTime('A', () => A(parsedInput));
+    logTime('B', () => B(parsedInput, answerA));
   })
   .catch((reason) => console.log(reason));
 
