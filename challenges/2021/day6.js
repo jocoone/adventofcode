@@ -20,11 +20,9 @@ function produceFish(fishCount, days) {
 
 function parse(input) {
   const fishes = input[0].split(',').map(Number);
-  const fishCount = [];
-  for (let i = 0; i <= 8; i++) {
-    fishCount.push(fishes.filter((x) => x === i).length);
-  }
-  return fishCount;
+  return [0, 1, 2, 3, 4, 5, 6, 7, 8].map(
+    (index) => fishes.filter((x) => x === index).length
+  );
 }
 
 module.exports = { A, B, parse };
