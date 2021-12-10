@@ -10,7 +10,7 @@ function A(input) {
 function B(input) {
   return input.map(({output, patterns}) => output
       .map(digit => sortBy(digit.split('')).join(''))
-      .map(digit => patterns.find(p => p.value === digit).signal)
+      .map(digit => patterns.find(p => p.value.join('') === digit).signal)
       .reduce((prev, x) => prev + x, ''))
     .map(Number)
     .reduce((prev, x) => prev + x, 0);
@@ -26,9 +26,9 @@ function determineSignal(value, patterns) {
   } else if (value.length === 7) {
     return 8;
   }
-  const one = sortBy(patterns.find(x => x.length === 2).split(''));
-  const four = sortBy(patterns.find(x => x.length === 4).split(''));
-  const eight = sortBy(patterns.find(x => x.length === 7).split(''));
+  const one = sortBy(patterns.find(x => x.length === 2));
+  const four = sortBy(patterns.find(x => x.length === 4));
+  const eight = sortBy(patterns.find(x => x.length === 7));
 
   const sortedValue = sortBy(value.split(''));
   if (value.length === 6) {
@@ -58,7 +58,7 @@ function parse(input) {
     const split = line.split(' | ');
     return {
       patterns: split[0].split(' ').map(value => ({
-        value: sortBy(value.split('')).join(''),
+        value: sortBy(value.split('')),
         signal: determineSignal(value, split[0].split(' '))
       })),
       output: split[1].split(' ')
