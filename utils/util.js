@@ -26,7 +26,7 @@ const findRoutes = (
     }
     nodes.delete(closest);
     const neighbors = cbNeighbors
-      ? cbNeighbors(graph, closest, closest.split(',').map(Number)[2])
+      ? cbNeighbors(graph, closest, closest.split(",").map(Number)[2])
       : graph[closest];
     neighbors.forEach((neighbor) => {
       if (!allKeys.has(neighbor)) {
@@ -54,10 +54,10 @@ const toPath = (prev, source, dest) => {
   return path.reverse();
 };
 
-const logTime = (ex = 'exercise', cb) => {
+const logTime = (ex = "exercise", cb) => {
   console.time(ex);
   const result = cb();
-  if (ex.includes('Parse') || ex.includes('Total')) {
+  if (ex.includes("Parse") || ex.includes("Total") || ex.includes("Read")) {
     console.timeLog(ex);
   } else {
     console.timeLog(ex, `➡️ ${JSON.stringify(result)}`);
@@ -69,7 +69,7 @@ function groupLines(lines) {
   const result = [];
   let newGroup = true;
   for (const line of lines) {
-    if (line === '') {
+    if (line === "") {
       newGroup = true;
     } else {
       if (newGroup) {
