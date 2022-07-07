@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/jocoone/adventofcode2019#readme",
   "dependencies": {
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "run-parallel": "^1.2.0"
   },
   "devDependencies": {
