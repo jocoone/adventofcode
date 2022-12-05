@@ -9,17 +9,12 @@ function countSections(lowerBoundaryIndex) {
 }
 
 function areSectionsOverlapping(assignment1, assigment2, lowerBoundaryIndex) {
-  if (
-    assignment1[lowerBoundaryIndex] >= assigment2[0] &&
-    assignment1[1] <= assigment2[1]
-  )
-    return true;
-  if (
-    assigment2[lowerBoundaryIndex] >= assignment1[0] &&
-    assigment2[1] <= assignment1[1]
-  )
-    return true;
-  return false;
+  return (
+    (assignment1[lowerBoundaryIndex] >= assigment2[0] &&
+      assignment1[1] <= assigment2[1]) ||
+    (assigment2[lowerBoundaryIndex] >= assignment1[0] &&
+      assigment2[1] <= assignment1[1])
+  );
 }
 
 function parse(input) {
