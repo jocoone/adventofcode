@@ -83,6 +83,47 @@ function groupLines(lines) {
   return result;
 }
 
+function repl(letter, c) {
+  const regex = new RegExp(c, "g");
+  return letter.replace(regex, "X");
+}
+
+const ALPHABET = {
+  A: [" XX X  XX  XXXXXX  XX  X"],
+  B: ["XXX X  XXXX XXX X  XXXX ", "XXX X  XXXX X  XX  XXXX "],
+  C: [" XX X  XX   X   X  X XX "],
+  D: ["XXX X  XX  XX  XX  XXXX "],
+  E: ["XXXXX   XXX X   X   XXXX"],
+  F: ["XXXXX   XXX X   X   X   "],
+  G: [" XX X  XX   X XXX  X XXX", repl(" ##    #      ##   # ###", "#")],
+  H: ["X  XX  XXXXXX  XX  XX  X"],
+  I: [""],
+  J: ["XXXX   X   X   X   XXXX "],
+  K: ["X  XX X XX  X X X X X  X", repl(" #  #  #   ##  ##  # # #", "#")],
+  L: ["X   X   X   X   X   XXXX"],
+  M: [""],
+  N: [""],
+  O: [" XX X  XX  XX  XX  X XX "],
+  P: ["XXX X  XXXX X   X   X   "],
+  Q: [""],
+  R: ["XXX X  XX  XXXX X X X  X", repl(" ### #   #   ### # # # ", "#")],
+  S: [" XX X  XXXX    X   XXXX "],
+  T: [""],
+  U: ["X  XX  XX  XX  XX  X XX "],
+  V: [""],
+  W: [""],
+  X: [""],
+  Y: [""],
+  Z: ["XXXX   X  X  X  X   XXXX"],
+};
+
+function findLetter(letterCharacters, c) {
+  return Object.keys(ALPHABET).find(
+    (key) =>
+      !!ALPHABET[key].find((comb) => comb.replace(/X/g, c) === letterCharacters)
+  );
+}
+
 module.exports = {
   maxBy,
   minBy,
@@ -90,4 +131,6 @@ module.exports = {
   toPath,
   logTime,
   groupLines,
+  ALPHABET,
+  findLetter,
 };

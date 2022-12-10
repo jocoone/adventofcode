@@ -1,79 +1,62 @@
+const x = 0;
+const y = 1;
+
 function A(input) {
-  const visited = ["0-0"];
-  const head = [0, 0];
-  const tail = [0, 0];
+  const visited = moveKnots(
+    [
+      [0, 0],
+      [0, 0],
+    ],
+    input
+  );
+
+  return Object.keys(visited).length;
+}
+
+function B(input) {
+  const knots = Array.from({ length: 10 }, () => [0, 0]);
+  const visited = moveKnots(knots, input);
+
+  return Object.keys(visited).length;
+}
+
+function moveKnots(knots, input) {
+  const visited = { "0-0": 1 };
   input.forEach(([direction, amount]) => {
-    for (let i = 0; i < amount; i++) {
-      move(head, tail, direction);
-      visited.push(tail.join("-"));
+    for (let move = 0; move < amount; move++) {
+      moveKnot(knots[0], direction);
+      for (let k = 1; k < knots.length; k++) {
+        moveTail(knots[k - 1], knots[k], direction);
+      }
+      visited[knots[knots.length - 1].join("-")] = 1;
     }
   });
-
-  return new Set(visited).size;
+  return visited;
 }
 
-function move(head, tail, direction) {
-  moveHead(head, direction);
-  moveTail(head, tail);
-}
-
-function moveHead(head, direction) {
+function moveKnot(knot, direction) {
   if (direction === "R") {
-    head[0]++;
+    knot[x]++;
   } else if (direction === "L") {
-    head[0]--;
+    knot[x]--;
   } else if (direction === "U") {
-    head[1]--;
+    knot[y]--;
   } else {
-    head[1]++;
+    knot[y]++;
   }
 }
 
 function moveTail(head, tail) {
-  if (Math.abs(head[0] - tail[0]) >= 2 || Math.abs(head[1] - tail[1]) >= 2) {
-    // issue
-    if (head[1] === tail[1]) {
-      if (head[0] > tail[0]) {
-        tail[0]++;
-      } else {
-        tail[0]--;
-      }
-    } else if (head[0] === tail[0]) {
-      if (head[1] > tail[1]) {
-        tail[1]++;
-      } else {
-        tail[1]--;
-      }
+  if (Math.abs(head[x] - tail[0]) > 1 || Math.abs(head[y] - tail[1]) > 1) {
+    if (head[y] === tail[1]) {
+      moveKnot(tail, head[x] > tail[0] ? "R" : "L");
+    } else if (head[x] === tail[0]) {
+      moveKnot(tail, head[y] > tail[1] ? "D" : "U");
     } else {
-      if (head[0] > tail[0]) {
-        tail[0]++;
-      } else {
-        tail[0]--;
-      }
-      if (head[1] > tail[1]) {
-        tail[1]++;
-      } else {
-        tail[1]--;
-      }
+      moveKnot(tail, head[x] > tail[0] ? "R" : "L");
+      moveKnot(tail, head[y] > tail[1] ? "D" : "U");
     }
   }
-}
-
-function B(input) {
-  const visited = ["0-0"];
-  const knots = Array.from({ length: 10 }, () => [0, 0]);
-
-  input.forEach(([direction, amount]) => {
-    for (let i = 0; i < amount; i++) {
-      moveHead(knots[0], direction);
-      for (let k = 1; k < knots.length; k++) {
-        moveTail(knots[k - 1], knots[k], direction);
-      }
-      visited.push(knots[knots.length - 1].join("-"));
-    }
-  });
-
-  return new Set(visited).size;
 }
 
 function parse(input) {

@@ -1,40 +1,38 @@
-const { uniqBy, find } = require('lodash');
-const IntCodeRunner = require('../../common/icc');
-
-const LEFT = 0;
-
+const { uniqBy, find } = require("lodash");
+const IntCodeRunner = require("../../common/icc");
 const ALPHABET = {
-  A: ' XX X  XX  XXXXXX  XX  X',
-  B: 'XXX X  XXXX XXX X  XXXX ',
-  C: ' XX X  XX   X   X  X XX ',
-  D: 'XXX X  XX  XX  XX  XXXX ',
-  E: 'XXXXX   XXX X   X   XXXX',
-  F: 'XXXXX   XXX X   X   X   ',
-  G: ' XX X  XX   X XXX  X XXX',
-  H: 'X  XX  XXXXXX  XX  XX  X',
-  I: '',
-  J: 'XXXX   X   X   X   XXXX ',
-  K: 'X  XX X XX  X X X X X  X',
-  L: 'X   X   X   X   X   XXXX',
-  M: '',
-  N: '',
-  O: ' XX X  XX  XX  XX  X XX ',
-  P: 'XXX X  XXXX X   X   X   ',
-  Q: '',
-  R: 'XXX X  XX  XXXX X X X  X',
-  S: ' XX X  XXXX    X   XXXX ',
-  T: '',
-  U: 'X  XX  XX  XX  XX  X XX ',
-  V: '',
-  W: '',
-  X: '',
-  Y: '',
-  Z: 'XXXX   X  X  X  X   XXXX',
+  A: " XX X  XX  XXXXXX  XX  X",
+  B: "XXX X  XXXX XXX X  XXXX ",
+  C: " XX X  XX   X   X  X XX ",
+  D: "XXX X  XX  XX  XX  XXXX ",
+  E: "XXXXX   XXX X   X   XXXX",
+  F: "XXXXX   XXX X   X   X   ",
+  G: " XX X  XX   X XXX  X XXX",
+  H: "X  XX  XXXXXX  XX  XX  X",
+  I: "",
+  J: "XXXX   X   X   X   XXXX ",
+  K: "X  XX X XX  X X X X X  X",
+  L: "X   X   X   X   X   XXXX",
+  M: "",
+  N: "",
+  O: " XX X  XX  XX  XX  X XX ",
+  P: "XXX X  XXXX X   X   X   ",
+  Q: "",
+  R: "XXX X  XX  XXXX X X X  X",
+  S: " XX X  XXXX    X   XXXX ",
+  T: "",
+  U: "X  XX  XX  XX  XX  X XX ",
+  V: "",
+  W: "",
+  X: "",
+  Y: "",
+  Z: "XXXX   X  X  X  X   XXXX",
 };
+const LEFT = 0;
 
 class Painter {
   constructor(input) {
-    this.direction = 'UP';
+    this.direction = "UP";
     this.program = new IntCodeRunner(input, [], 2);
     this.coordinates = [];
     this.lastX = 0;
@@ -42,20 +40,20 @@ class Painter {
   }
 
   movePointer(turn) {
-    if (this.direction === 'UP') {
-      this.direction = turn === LEFT ? 'LEFT' : 'RIGHT';
-    } else if (this.direction === 'DOWN') {
-      this.direction = turn === LEFT ? 'RIGHT' : 'LEFT';
-    } else if (this.direction === 'RIGHT') {
-      this.direction = turn === LEFT ? 'UP' : 'DOWN';
+    if (this.direction === "UP") {
+      this.direction = turn === LEFT ? "LEFT" : "RIGHT";
+    } else if (this.direction === "DOWN") {
+      this.direction = turn === LEFT ? "RIGHT" : "LEFT";
+    } else if (this.direction === "RIGHT") {
+      this.direction = turn === LEFT ? "UP" : "DOWN";
     } else {
-      this.direction = turn === LEFT ? 'DOWN' : 'UP';
+      this.direction = turn === LEFT ? "DOWN" : "UP";
     }
-    if (this.direction === 'UP') {
+    if (this.direction === "UP") {
       this.lastY++;
-    } else if (this.direction === 'DOWN') {
+    } else if (this.direction === "DOWN") {
       this.lastY--;
-    } else if (this.direction === 'RIGHT') {
+    } else if (this.direction === "RIGHT") {
       this.lastX++;
     } else {
       this.lastX--;
@@ -108,9 +106,9 @@ class Painter {
       for (let x = smallestX + 1; x < largestX; x++) {
         const coordinate = find(result, { x, y });
         if (coordinate && coordinate.color === 1) {
-          row.push('X');
+          row.push("X");
         } else {
-          row.push(' ');
+          row.push(" ");
         }
       }
       rule.push(row);
@@ -119,7 +117,7 @@ class Painter {
   }
 
   clear() {
-    this.direction = 'UP';
+    this.direction = "UP";
     this.coordinates = [];
     this.lastX = 0;
     this.lastY = 0;
@@ -129,7 +127,7 @@ class Painter {
 function A(painter) {
   painter.draw(0);
 
-  const result = uniqBy(painter.coordinates, (x) => x.x + '-' + x.y).length;
+  const result = uniqBy(painter.coordinates, (x) => x.x + "-" + x.y).length;
   //painter.clear();
   return result;
 }
@@ -139,7 +137,7 @@ function B(painter) {
   const visualisation = painter.visualise(painter.coordinates);
   const letters = [];
   for (let i = 0; i < 8; i++) {
-    let letter = '';
+    let letter = "";
     for (let y = 0; y < visualisation.length; y++) {
       for (let x = 0; x < visualisation[y].length; x++) {
         if (x >= letters.length * 5 && x < letters.length * 5 + 4) {
@@ -159,13 +157,13 @@ function B(painter) {
         }
       }
     })
-    .join('');
+    .join("");
 
   return sentence;
 }
 
 function parse(input) {
-  const visuals = input[0].split(',').map(Number);
+  const visuals = input[0].split(",").map(Number);
   return new Painter(visuals);
 }
 

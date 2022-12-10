@@ -45,18 +45,34 @@ inquirer
     },
   ])
   .then(({ year = DEFAULT_YEAR, day = DEFAULT_DAY }) => {
-    const { A, B, parse, input } = logTime("Read", () => {
-      const file = FILE || `aoc${day}.txt`;
-      const input = fs.existsSync(`./input/${year}/${file}`)
-        ? readLines(`input/${year}/aoc${day}.txt`)
-        : [];
-      return {
-        ...require(`./challenges/${year}/day${day}.js`),
-        input,
-      };
-    });
+    const { A, B, parse, input } = logTime("Read", () => read(year, day));
     const parsedInput = logTime("Parse", () => parse(input));
     const answerA = logTime("A", () => A(parsedInput));
     logTime("B", () => B(parsedInput, answerA));
   })
   .catch((reason) => console.log(reason));
+
+function read(year, day) {
+  const file = FILE || `aoc${day}.txt`;
+  const input = fs.existsSync(`./input/${year}/${file}`)
+    ? readLines(`input/${year}/aoc${day}.txt`)
+    : [];
+  return {
+    ...require(`./challenges/${year}/day${day}.js`),
+    input,
+  };
+}
+
+function getDayModules(year, day) {
+  const { A, B, parse, input } = read(year, day);
+  const parsedInput = parse(input);
+  const answerA = A(parsedInput);
+  const answerB = B(parsedInput, answerA);
+
+  return {
+    A: answerA,
+    B: answerB,
+  };
+}
+
+module.exports = { getDayModules };
