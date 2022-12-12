@@ -13,6 +13,8 @@ const dir = __dirname.split("/").pop();
   [1814, 330786],
   [6018, 2619],
   [14360, "BGKAEREZ"],
+  [54253, 13119526120],
+  [383, 377],
 ].forEach(([answerA, answerB], index) => {
   describe(`Day ${index + 1}`, () => {
     const { A, B } = getDayModules(dir, index + 1);

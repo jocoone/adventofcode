@@ -2,14 +2,7 @@ const maxBy = (cb) => (a, b) => cb(b) > cb(a) ? b : a;
 
 const minBy = (cb) => (a, b) => cb(b) < cb(a) ? b : a;
 
-const findRoutes = (
-  graph,
-  source,
-  dest,
-  cbNeighbors,
-  portals = {},
-  useLevels = false
-) => {
+const findRoutes = (graph, source, dest, cbNeighbors) => {
   const allKeys = new Set([source]);
   const nodes = new Set([source]);
   const dist = new Map();
@@ -26,7 +19,7 @@ const findRoutes = (
     }
     nodes.delete(closest);
     const neighbors = cbNeighbors
-      ? cbNeighbors(graph, closest, closest.split(",").map(Number)[2])
+      ? cbNeighbors(graph, closest)
       : graph[closest];
     neighbors.forEach((neighbor) => {
       if (!allKeys.has(neighbor)) {
