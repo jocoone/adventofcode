@@ -1,31 +1,26 @@
 function A(input) {
   return input
-    .map(([left, right], index) => {
-      if (compareSignal(left, right)) return index + 1;
-      return 0;
-    })
+    .map(([left, right], index) => (compareSignal(left, right) ? index + 1 : 0))
     .reduce((prev, curr) => prev + curr, 0);
 }
 
 function B(input) {
-  const sorted = [...input.flat(), [[2]], [[6]]].sort((a, b) => {
-    const result = compareSignal(a, b);
-    if (result === undefined) return 0;
-    return result ? -1 : 1;
-  });
-  const two = sorted.findIndex((x) => x.toString() == "2") + 1;
-  const six = sorted.findIndex((x) => x.toString() == "6") + 1;
-  return two * six;
+  const signals = [...input.flat(), [[2]], [[6]]];
+  const sorted = signals.sort(sortSignals);
+  const divider1 = sorted.findIndex((x) => x.toString() == "2") + 1;
+  const divider2 = sorted.findIndex((x) => x.toString() == "6") + 1;
+  return divider1 * divider2;
 }
 
 function compareSignal(left, right) {
   if (left === undefined || right === undefined) return left === undefined;
-  else if (typeof left === "object" && typeof right === "object")
-    return compareArrays(left, right);
-  else if (typeof left === "number" && typeof right === "number")
-    return compareNumbers(left, right);
-  else if (typeof left === "number") return compareSignal([left], right);
-  else if (typeof right === "number") return compareSignal(left, [right]);
+  else if (typeof left === "number" || typeof right === "number") {
+    if (typeof left === "number" && typeof right === "number") {
+      return compareNumbers(left, right);
+    } else if (typeof left === "number") return compareSignal([left], right);
+    else if (typeof right === "number") return compareSignal(left, [right]);
+  }
+  return compareArrays(left, right);
 }
 
 function compareNumbers(left, right) {
@@ -43,6 +38,12 @@ function compareArrays(left, right) {
     return result;
   }
   return undefined;
+}
+
+function sortSignals(a, b) {
+  const result = compareSignal(a, b);
+  if (result === undefined) return 0;
+  return result ? -1 : 1;
 }
 
 function parse(input) {
